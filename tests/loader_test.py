@@ -1,15 +1,11 @@
 import tempfile
 from pathlib import Path
 
+import pytest
 import requests_mock
+from conftest import SEP, TEST_FILE, URL, get_fixture_path
+
 from page_loader.loader import download
-
-URL = "https://ru.hexlet.io/courses"
-TEST_FILE = "raw.html"
-
-
-def get_fixture_path(file_name):
-    return str(Path.cwd() / "tests" / "fixtures" / file_name)
 
 
 def test_download_makes_request_and_saves_file():
@@ -22,3 +18,28 @@ def test_download_makes_request_and_saves_file():
             result = Path(result_path).read_bytes()
 
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    "url, expected",
+    [
+        (
+            "https://ru.hexlet.io/courses",
+            "ru-hexlet-io-courses.html",
+        ),
+        (
+            "https://ru.hexlet.io/courses.html",
+            "ru-hexlet-io-courses.html",
+        ),
+    ],
+)
+def test_download_saves_with_correct_names(url, expected):
+    fixture_path = get_fixture_path(TEST_FILE)
+    cont = Path(fixture_path).read_bytes()
+    with requests_mock.Mocker() as m:
+        m.get(url, content=cont)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = download(url, tmpdir)
+            filename = path.split(SEP)[-1]
+
+    assert filename == expected
