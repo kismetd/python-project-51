@@ -1,5 +1,0 @@
-"""docstr"""
-
-
-def download():
-    pass
