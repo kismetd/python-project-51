@@ -1,14 +1,19 @@
 """Download web pages locally"""
 import os
 import re
+from pathlib import Path
 
 import requests
 
 
 def _format_path(url: str, dir: str) -> str:
     address = url.split("://")[1]
-    file_name = re.sub(r"[^\w\s]", "-", address) + ".html"
-    return os.path.join(dir, file_name)
+    suffix = Path(address).suffix
+    if suffix == ".html":
+        address = address[: -len(suffix)]
+    address = re.sub(r"[^\w\s]", "-", address)
+    filename = ".".join([address, "html"])
+    return str(Path(dir, filename))
 
 
 def download(url: str, dir=os.getcwd()) -> str:
