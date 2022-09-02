@@ -1,5 +1,4 @@
 """Download web pages locally"""
-import os
 import re
 from pathlib import Path
 
@@ -16,7 +15,7 @@ def _format_path(url: str, dir: str) -> str:
     return str(Path(dir, filename))
 
 
-def download(url: str, dir=os.getcwd()) -> str:
+def download(url: str, dir: str) -> str:
     """Download html page and save in given existing directory.
 
     Args:
