@@ -1,0 +1,4 @@
+ignore:
+    - "page_loader/__main__.py"
+    - "page_loader/__init__.py"
+    - "tests"
