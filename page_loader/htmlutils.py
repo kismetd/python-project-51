@@ -15,11 +15,10 @@ _ATTRIBUTES = {
 
 
 def get_sources_and_update(html: str, dir: str, url: str) -> dict[str, str]:
-    """Finds all local resources in a html page.
+    """Finds all local resources in a HTML page.
 
     A resource is called local if its 'src' or 'href' attribute
-    points to the same domain (Network location part) as the
-    html-page it is part of.
+    points to the same server as the HTML page.
 
     Returns URLs of all local resources in the document and
     paths to their copies on the machine.
@@ -27,11 +26,11 @@ def get_sources_and_update(html: str, dir: str, url: str) -> dict[str, str]:
     Args:
         html (str): Path to html file.
         dir (str): Path to directory where resources will be stored.
-        url (str): Url to given html page
+        url (str): URL to given html page.
 
     Returns:
         dict[str, str]: Key: URLs of all local resources. Value: paths to
-        them on the computer.
+        their equivalents saved on the computer.
     """
     paths = {}
     data = Path(html).read_text()
