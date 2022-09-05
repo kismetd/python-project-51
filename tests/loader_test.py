@@ -36,10 +36,18 @@ def page_with_resources(requests_mock):
     img_data = Path(get_fixture_path("image.png")).read_bytes()
     requests_mock.get(url=img_url, content=img_data)
 
+    css_url = urljoin(URL, "/assets/application.css")
+    css_data = Path(get_fixture_path("style.css")).read_bytes()
+    requests_mock.get(url=css_url, content=css_data)
+
+    script_url = urljoin(URL, "/packs/js/runtime.js")
+    script_text = Path(get_fixture_path("script.js")).read_bytes()
+    requests_mock.get(url=script_url, content=script_text)
+
 
 def test_download_page_with_resources(page_with_resources, tmp_path):
     tempdir = Path(download(URL, tmp_path)).parent
-    fixture_names = ("local_page.html", "image.png")
+    fixture_names = ("local_page.html", "image.png", "style.css", "script.js")
     fixtures = [Path(get_fixture_path(file)) for file in fixture_names]
     files = [Path(tempdir, file) for file in Path(tempdir).rglob("*")]
 
