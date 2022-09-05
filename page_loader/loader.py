@@ -1,21 +1,19 @@
 """Download web pages locally"""
-import re
 from pathlib import Path
 
 import requests
+from bs4 import BeautifulSoup
+from page_loader.htmlutils import get_sources_and_update
+from page_loader.urlutils import url_to_filename
+
+_CWD = str(Path.cwd())
 
 
-def _format_path(url: str, dir: str) -> str:
-    address = url.split("://")[1]
-    suffix = Path(address).suffix
-    if suffix == ".html":
-        address = address[: -len(suffix)]
-    address = re.sub(r"[^\w\s]", "-", address)
-    filename = ".".join([address, "html"])
-    return str(Path(dir, filename))
+def _make_request(url: str) -> requests.Response:
+    return requests.get(url)
 
 
-def download(url: str, dir: str) -> str:
+def download(url: str, dir=_CWD) -> str:
     """Download html page and save in given existing directory.
 
     Args:
@@ -25,8 +23,20 @@ def download(url: str, dir: str) -> str:
     Returns:
         str: full path to saved file
     """
-    response = requests.get(url)
-    save_path = _format_path(url, dir)
-    with open(save_path, "w") as f:
-        f.write(response.text)
-    return save_path
+    dir_name = url_to_filename(url, "_files")
+    dir_path = Path(dir, dir_name)
+    Path.mkdir(dir_path)
+
+    page_name = url_to_filename(url, ".html")
+    page_path = Path(dir_path, page_name)
+    page_data = _make_request(url).content
+    parsed_page = BeautifulSoup(page_data, "html.parser").prettify()
+    Path(page_path).write_text(parsed_page)
+
+    sources = get_sources_and_update(str(page_path), dir_name, url)
+    for abs_url, local_name in sources.items():
+        file_path = str(Path(dir, local_name))
+        file_data = _make_request(abs_url).content
+        Path(file_path).write_bytes(file_data)
+
+    return str(page_path)
