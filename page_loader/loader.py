@@ -36,6 +36,8 @@ def download(url: str, dir=_CWD) -> str:
     sources = get_sources_and_update(str(page_path), dir_name, url)
     for abs_url, local_name in sources.items():
         file_path = str(Path(dir, local_name))
+        if Path(file_path).exists():
+            continue
         file_data = _make_request(abs_url).content
         Path(file_path).write_bytes(file_data)
 

@@ -8,12 +8,12 @@ def _format(text: str):
     return re.sub(r"[^\w\s]", "-", text)
 
 
-def url_to_filename(url: str, ext="") -> str:
+def url_to_filename(url: str, ext=".html") -> str:
     url_parts = urlparse(url)
     netloc = url_parts.netloc
     path, extension = os.path.splitext(url_parts.path)
 
-    if ext:
+    if ext and not extension:
         extension = ext
 
     filename = _format("".join([netloc, path]))
