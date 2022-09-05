@@ -37,12 +37,12 @@ def page_with_resources(requests_mock):
     requests_mock.get(url=img_url, content=img_data)
 
     css_url = urljoin(URL, "/assets/application.css")
-    css_data = Path(get_fixture_path("style.css")).read_bytes()
-    requests_mock.get(url=css_url, content=css_data)
+    css = Path(get_fixture_path("style.css")).read_bytes()
+    requests_mock.get(url=css_url, content=css)
 
     script_url = urljoin(URL, "/packs/js/runtime.js")
-    script_text = Path(get_fixture_path("script.js")).read_bytes()
-    requests_mock.get(url=script_url, content=script_text)
+    script = Path(get_fixture_path("script.js")).read_bytes()
+    requests_mock.get(url=script_url, content=script)
 
 
 def test_download_page_with_resources(page_with_resources, tmp_path):
