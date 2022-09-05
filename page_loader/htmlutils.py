@@ -36,7 +36,7 @@ def get_sources_and_update(html: str, dir: str, url: str) -> dict[str, str]:
     paths = {}
     data = Path(html).read_text()
     page = BeautifulSoup(data, "html.parser")
-    tags = page.find_all("img")  # only for images for now
+    tags = page.find_all(_TAGS)
 
     for tag in tags:
         attr = _ATTRIBUTES[tag.name]
