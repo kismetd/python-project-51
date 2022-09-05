@@ -1,9 +1,8 @@
-import os
 from pathlib import Path
 
-SEP = os.sep
 URL = "https://ru.hexlet.io/courses"
-TEST_FILE = "raw.html"
+LOCAL_DIR = "ru-hexlet-io-courses_files"
+LOCAL_PAGE = "ru-hexlet-io-courses.html"
 
 
 def get_fixture_path(file_name):

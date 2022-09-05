@@ -1,45 +1,48 @@
-import tempfile
 from pathlib import Path
+from urllib.parse import urljoin
 
 import pytest
-import requests_mock
-from conftest import SEP, TEST_FILE, URL, get_fixture_path
-
 from page_loader.loader import download
+from tests.conftest import LOCAL_DIR, LOCAL_PAGE, URL, get_fixture_path
 
 
-def test_download_makes_request_and_saves_file():
-    fixture_path = get_fixture_path(TEST_FILE)
-    expected = Path(fixture_path).read_bytes()
-    with requests_mock.Mocker() as m:
-        m.get(URL, content=expected)
-        with tempfile.TemporaryDirectory() as tmpdir:
-            result_path = download(URL, tmpdir)
-            result = Path(result_path).read_bytes()
-
-    assert result == expected
+@pytest.fixture
+def html_empty():
+    return "<html></html>"
 
 
-@pytest.mark.parametrize(
-    "url, expected",
-    [
-        (
-            "https://ru.hexlet.io/courses",
-            "ru-hexlet-io-courses.html",
-        ),
-        (
-            "https://ru.hexlet.io/courses.html",
-            "ru-hexlet-io-courses.html",
-        ),
-    ],
-)
-def test_download_saves_with_correct_names(url, expected):
-    fixture_path = get_fixture_path(TEST_FILE)
-    cont = Path(fixture_path).read_bytes()
-    with requests_mock.Mocker() as m:
-        m.get(url, content=cont)
-        with tempfile.TemporaryDirectory() as tmpdir:
-            path = download(url, tmpdir)
-            filename = path.split(SEP)[-1]
+def test_download_makes_expected_dir(requests_mock, html_empty, tmp_path):
+    expected = html_empty
+    requests_mock.get(URL, text=expected)
+    _ = download(URL, tmp_path)
 
-    assert filename == expected
+    assert Path(tmp_path, LOCAL_DIR).exists() is True
+
+
+def test_download_gets_page_empty(requests_mock, html_empty, tmp_path):
+    expected = html_empty
+    requests_mock.get(URL, text=expected)
+    _ = download(URL, tmp_path)
+
+    assert Path(tmp_path, LOCAL_DIR, LOCAL_PAGE).exists() is True
+
+
+@pytest.fixture
+def page_with_resources(requests_mock):
+    page_content = Path(get_fixture_path("remote_page.html")).read_text()
+    requests_mock.get(URL, text=page_content)
+
+    img_url = urljoin(URL, "/assets/professions/python.png")
+    img_data = Path(get_fixture_path("image.png")).read_bytes()
+    requests_mock.get(url=img_url, content=img_data)
+
+
+def test_download_page_with_resources(page_with_resources, tmp_path):
+    tempdir = Path(download(URL, tmp_path)).parent
+    fixture_names = ("local_page.html", "image.png")
+    fixtures = [Path(get_fixture_path(file)) for file in fixture_names]
+    files = [Path(tempdir, file) for file in Path(tempdir).rglob("*")]
+
+    actual = sorted(map(lambda x: x.stat().st_size, files))
+    expected = sorted(map(lambda x: x.stat().st_size, fixtures))
+    assert actual == expected
