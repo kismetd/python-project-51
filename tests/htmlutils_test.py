@@ -3,25 +3,7 @@ from tempfile import TemporaryDirectory
 
 import pytest
 from page_loader.htmlutils import get_sources_and_update
-from tests.conftest import LOCAL_DIR, LOCAL_PAGE, URL, get_fixture_path
-
-
-@pytest.fixture
-def srcdict():
-    key = "https://ru.hexlet.io/assets/professions/python.png"
-    val = f"{LOCAL_DIR}/ru-hexlet-io-assets-professions-python.png"
-    return {key: val}
-
-
-def test_get_sources_and_update_returns_correct_sources(srcdict, tmp_path):
-
-    temp_page = str(Path(tmp_path, LOCAL_PAGE))
-    fixture_text = Path(get_fixture_path("remote_page.html")).read_text()
-    Path(temp_page).write_text(fixture_text)
-
-    actual = get_sources_and_update(temp_page, LOCAL_DIR, URL)
-
-    assert actual == srcdict
+from tests.conftest import URL, get_fixture_path
 
 
 @pytest.mark.parametrize(
