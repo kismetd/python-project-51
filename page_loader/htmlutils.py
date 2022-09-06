@@ -2,6 +2,7 @@
 from pathlib import Path
 from urllib.parse import urljoin
 
+import page_loader.exceptions as exceptions
 from bs4 import BeautifulSoup
 from page_loader.urlutils import is_local, url_to_filename
 
@@ -14,6 +15,7 @@ _ATTRIBUTES = {
 }
 
 
+@exceptions.filesystem_err
 def get_sources_and_update(html: str, dir: str, url: str) -> dict[str, str]:
     """Finds all local resources in a HTML page.
 
