@@ -7,6 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 from page_loader.htmlutils import get_sources_and_update
 from page_loader.urlutils import url_to_filename
+from progress.bar import ChargingBar
 
 DEFAULT_DIR = str(Path.cwd())
 logger = logging.getLogger(__name__)
@@ -23,20 +24,21 @@ def _get_content(url: str):
 @exceptions.filesystem_err
 def _load_resources(sources: dict[str, str], dir: str) -> None:
     """Attempt to load all local resources. Doesn't terminate on failure."""
+    with ChargingBar("Downloading", max=len(sources)) as bar:
+        for abs_url, local_name in sources.items():
+            file_path = str(Path(dir, local_name))
+            if Path(file_path).exists():
+                logger.info(f"{file_path} already exists! Skipping...")
+                continue
 
-    for abs_url, local_name in sources.items():
-        file_path = str(Path(dir, local_name))
-        if Path(file_path).exists():
-            logger.info(f"{file_path} already exists! Skipping...")
-            continue
-
-        try:
-            file_data = _get_content(abs_url)
-            Path(file_path).write_bytes(file_data)
-            logger.info(f"Saving {file_path}... Success!")
-        except requests.exceptions.RequestException as e:
-            logger.debug(msg="Network Error", exc_info=e)
-            logger.warning(f"Failed fetch file from {abs_url}. Skipping...")
+            try:
+                file_data = _get_content(abs_url)
+                Path(file_path).write_bytes(file_data)
+                logger.info(f"Saving {file_path}... Success!")
+                bar.next()
+            except requests.exceptions.RequestException as e:
+                logger.debug(msg="Network Error", exc_info=e)
+                logger.warning(f"Failed fetch file: {abs_url}. Skipping...")
 
 
 @exceptions.filesystem_err
