@@ -55,7 +55,6 @@ def download(url: str, dir=DEFAULT_DIR) -> str:
 
     dir_name = url_to_filename(url, "_files")
     dir_path = Path(dir, dir_name)
-    Path.mkdir(dir_path)
 
     page_name = url_to_filename(url, ".html")
     page_path = Path(dir_path, page_name)
@@ -69,6 +68,7 @@ def download(url: str, dir=DEFAULT_DIR) -> str:
         logger.warning("Cannot proceed without html document! Terminating...")
         raise exceptions.NetworkError from e
 
+    Path.mkdir(dir_path)
     parsed_page = BeautifulSoup(page_data, "html.parser").prettify()
     Path(page_path).write_text(parsed_page)
     logger.info(f"Saving page {url}... Success!")
