@@ -49,7 +49,7 @@ def test_download_page_with_resources(page_with_resources, tmp_path):
     tempdir = Path(download(URL, tmp_path)).parent
     fixture_names = ("local_page.html", "image.png", "style.css", "script.js")
     fixtures = [Path(get_fixture_path(file)) for file in fixture_names]
-    files = [Path(tempdir, file) for file in Path(tempdir).rglob("*")]
+    files = [Path(tempdir, file) for file in Path(tempdir).glob("*")]
 
     actual = sorted(map(lambda x: x.stat().st_size, files))
     expected = sorted(map(lambda x: x.stat().st_size, fixtures))
