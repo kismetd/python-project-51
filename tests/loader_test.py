@@ -1,7 +1,9 @@
+import os
 from pathlib import Path
 from urllib.parse import urljoin
 
 import pytest
+import requests
 from page_loader.loader import download
 from tests.conftest import LOCAL_DIR, LOCAL_PAGE, URL, get_fixture_path
 
@@ -54,3 +56,15 @@ def test_download_page_with_resources(page_with_resources, tmp_path):
     actual = sorted(map(lambda x: x.stat().st_size, files))
     expected = sorted(map(lambda x: x.stat().st_size, fixtures))
     assert actual == expected
+
+
+def test_connection_error(requests_mock, tmp_path):
+    invalid_url = "https://badsite.com"
+    requests_mock.get(invalid_url, exc=requests.exceptions.ConnectionError)
+
+    assert not os.listdir(tmp_path)
+
+    with pytest.raises(Exception):
+        assert download(invalid_url, tmp_path)
+
+    assert not os.listdir(tmp_path)
