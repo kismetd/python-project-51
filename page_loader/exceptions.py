@@ -8,6 +8,10 @@ class FileSystemError(Exception):
     pass
 
 
+class NetworkError(Exception):
+    pass
+
+
 def filesystem_err(func):
     """Safe work with filesystem"""
 

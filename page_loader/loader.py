@@ -65,7 +65,7 @@ def download(url: str, dir=DEFAULT_DIR) -> str:
         logger.debug(msg="Network Error", exc_info=e)
         logger.warning(f"Failed fetch page: {url}.")
         logger.warning("Cannot proceed without html document! Terminating...")
-        raise SystemExit(e)
+        raise exceptions.NetworkError from e
 
     parsed_page = BeautifulSoup(page_data, "html.parser").prettify()
     Path(page_path).write_text(parsed_page)
