@@ -6,14 +6,14 @@ from bs4 import BeautifulSoup
 from page_loader.htmlutils import get_sources_and_update
 from page_loader.urlutils import url_to_filename
 
-_CWD = str(Path.cwd())
+DEFAULT_DIR = str(Path.cwd())
 
 
 def _make_request(url: str) -> requests.Response:
     return requests.get(url)
 
 
-def download(url: str, dir=_CWD) -> str:
+def download(url: str, dir=DEFAULT_DIR) -> str:
     """Download html page and save in given existing directory.
 
     Args:

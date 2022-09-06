@@ -1,24 +1,20 @@
-import argparse
-import os
+#!/usr/bin/env python3
+"""
+Download web pages locally
+"""
+import logging
 
-from page_loader import download
+from page_loader.cli import get_args
+from page_loader.loader import download
+from page_loader.logconf import setup
 
-parser = argparse.ArgumentParser(
-    description="Download a web page and save it locally",
-)
-parser.add_argument(
-    "-o",
-    "--output",
-    type=str,
-    default=os.getcwd,
-    help="path to save the page content",
-)
-parser.add_argument("url", type=str, help="url address")
-args = parser.parse_args()
+logger = logging.getLogger(__name__)
 
 
 def main():
-    print(download(args.url, args.output))
+    target_dir, url, log_lvl = get_args()
+    setup(log_lvl)
+    print(download(url, target_dir))
 
 
 if __name__ == "__main__":
