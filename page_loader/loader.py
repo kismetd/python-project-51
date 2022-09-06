@@ -53,11 +53,8 @@ def download(url: str, dir=DEFAULT_DIR) -> str:
         str: full path to saved file
     """
 
-    dir_name = url_to_filename(url, "_files")
-    dir_path = Path(dir, dir_name)
-
     page_name = url_to_filename(url, ".html")
-    page_path = Path(dir_path, page_name)
+    page_path = Path(dir, page_name)
 
     try:
         page_data = _get_content(url)
@@ -68,15 +65,17 @@ def download(url: str, dir=DEFAULT_DIR) -> str:
         logger.warning("Cannot proceed without html document! Terminating...")
         raise exceptions.NetworkError from e
 
-    Path.mkdir(dir_path)
-    logger.info(f"{dir_path} was created.")
-
     parsed_page = BeautifulSoup(page_data, "html.parser").prettify()
     Path(page_path).write_text(parsed_page)
     logger.info(f"Saving page {url}... Success!")
 
+    dir_name = url_to_filename(url, "_files")
     sources = get_sources_and_update(str(page_path), dir_name, url)
     if sources:
+        dir_path = Path(dir, dir_name)
+        Path.mkdir(dir_path)
+        logger.info("Expected to load page resources.")
+        logger.info(f"Directory '{dir_path}' was created.")
         _load_resources(sources, dir)
 
     return str(page_path)
