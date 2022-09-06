@@ -13,20 +13,15 @@ def html_empty():
     return "<html></html>"
 
 
-def test_download_makes_expected_dir(requests_mock, html_empty, tmp_path):
+def test_download_page_empty(requests_mock, html_empty, tmp_path):
     expected = html_empty
     requests_mock.get(URL, text=expected)
-    _ = download(URL, tmp_path)
 
-    assert Path(tmp_path, LOCAL_DIR).exists() is True
+    assert not Path(tmp_path, LOCAL_DIR).exists()
+    download(URL, tmp_path)
 
-
-def test_download_gets_page_empty(requests_mock, html_empty, tmp_path):
-    expected = html_empty
-    requests_mock.get(URL, text=expected)
-    _ = download(URL, tmp_path)
-
-    assert Path(tmp_path, LOCAL_DIR, LOCAL_PAGE).exists() is True
+    assert not Path(tmp_path, LOCAL_DIR).exists()
+    assert Path(tmp_path, LOCAL_PAGE).exists()
 
 
 @pytest.fixture
@@ -48,8 +43,9 @@ def page_with_resources(requests_mock):
 
 
 def test_download_page_with_resources(page_with_resources, tmp_path):
-    tempdir = Path(download(URL, tmp_path)).parent
-    fixture_names = ("local_page.html", "image.png", "style.css", "script.js")
+    download(URL, tmp_path)
+    tempdir = Path(tmp_path, LOCAL_DIR)
+    fixture_names = ("remote_page.html", "image.png", "style.css", "script.js")
     fixtures = [Path(get_fixture_path(file)) for file in fixture_names]
     files = [Path(tempdir, file) for file in Path(tempdir).glob("*")]
 
