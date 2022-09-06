@@ -61,7 +61,7 @@ def download(url: str, dir=DEFAULT_DIR) -> str:
 
     try:
         page_data = _get_content(url)
-        logging.info(f"Connecting to {url}... Success!")
+        logging.info(f"Getting page: {url}... Success!")
     except requests.exceptions.RequestException as e:
         logger.debug(msg="Network Error", exc_info=e)
         logger.warning(f"Failed fetch page: {url}.")
@@ -69,6 +69,8 @@ def download(url: str, dir=DEFAULT_DIR) -> str:
         raise exceptions.NetworkError from e
 
     Path.mkdir(dir_path)
+    logger.info(f"{dir_path} was created.")
+
     parsed_page = BeautifulSoup(page_data, "html.parser").prettify()
     Path(page_path).write_text(parsed_page)
     logger.info(f"Saving page {url}... Success!")
