@@ -28,6 +28,13 @@ def filesystem_err(func):
                 exc_info=e,
             )
 
+        except FileNotFoundError as e:
+            logger.error(
+                msg=("File not found."),  # noqa E501
+                exc_info=e,
+            )
+            raise FileSystemError from e
+
         except OSError as e:
             logger.error(e)
             raise FileSystemError from e
