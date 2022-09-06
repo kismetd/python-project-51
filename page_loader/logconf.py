@@ -1,4 +1,4 @@
-"""Use to set logging configuration"""
+"""Utils to setup event logging"""
 import logging
 import os
 
@@ -51,7 +51,9 @@ CONFIGS = {
 
 
 def setup(level="warning") -> None:
-    """import inside an entry point module to set Logging Configuration.
+    """Set logging level
+
+    Import inside an entry point module to set Logging Configuration.
     Logging levels in order of severity: DEBUG, INFO, WARNING, ERROR, CRITICAL.
 
     For example, if severity is set to the lowest level DEBUG:
