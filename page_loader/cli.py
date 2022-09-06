@@ -26,7 +26,7 @@ def get_args():
         "-l",
         "--log",
         help="Set log level",
-        default="WARNING",
+        default=logconf.DEFAULT_LEVEL,
         choices=logconf.CONFIGS.keys(),
     )
     args = parser.parse_args()

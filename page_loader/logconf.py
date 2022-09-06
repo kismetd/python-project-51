@@ -3,6 +3,7 @@ import logging
 import os
 
 _LOGS_DIR = os.path.join(os.getcwd(), "logs")
+DEFAULT_LEVEL = "warning"
 if not os.path.exists(_LOGS_DIR):
     os.mkdir(_LOGS_DIR)
 
@@ -50,7 +51,7 @@ CONFIGS = {
 }
 
 
-def setup(level="warning") -> None:
+def setup(lvl=DEFAULT_LEVEL) -> None:
     """Set logging level
 
     Import inside an entry point module to set Logging Configuration.
@@ -66,7 +67,7 @@ def setup(level="warning") -> None:
         level (str): Logging level in lowercase
     """
     logging.basicConfig(
-        level=CONFIGS[level]["level"],
-        format=CONFIGS[level]["format"],
-        handlers=CONFIGS[level]["handlers"],
+        level=CONFIGS[lvl]["level"],
+        format=CONFIGS[lvl]["format"],
+        handlers=CONFIGS[lvl]["handlers"],
     )
