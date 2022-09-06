@@ -4,7 +4,6 @@ from pathlib import Path
 
 import page_loader.exceptions as exceptions
 import requests
-from bs4 import BeautifulSoup
 from page_loader.htmlutils import get_sources_and_update
 from page_loader.urlutils import url_to_filename
 from progress.bar import ChargingBar
@@ -65,8 +64,7 @@ def download(url: str, dir=DEFAULT_DIR) -> str:
         logger.warning("Cannot proceed without html document! Terminating...")
         raise exceptions.NetworkError from e
 
-    parsed_page = BeautifulSoup(page_data, "html.parser").prettify()
-    Path(page_path).write_text(parsed_page)
+    Path(page_path).write_bytes(page_data)
     logger.info(f"Saving page {url}... Success!")
 
     dir_name = url_to_filename(url, "_files")
