@@ -40,7 +40,6 @@ def _load_resources(sources: dict[str, str], dir: str) -> None:
 
 
 @exceptions.filesystem_err
-@exceptions.makedir_handler
 def download(url: str, dir=DEFAULT_DIR) -> str:
     """Download html page and save in given existing directory.
 
